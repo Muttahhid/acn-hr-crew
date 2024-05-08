@@ -1,92 +1,46 @@
-import os
-import json
-from crewai import Agent, Task, Crew, Process
-from langchain_groq import ChatGroq
-from langchain_openai import ChatOpenAI
-# from decouple import config
+from HRCrew import HRCrew
+from tools.AcnPDFReader import AcnPDFReader
+import pathlib
 
-from textwrap import dedent
-from agents import HRAgents
-from tasks import HRTasks
-from utils.config_utils import ConfigUtility
+jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00176185_en&title=Front-End%20Angular%20%2FReactJS%20Developer"
+# linkedinURL = "https://adouti.com/wordpress/wp-content/uploads/2021/02/MiguelMresume-1.pdf"
+linkedinURL = "https://www.dayjob.com/downloads/CV_examples/java_developer_cv_template.pdf"
 
-configFileName='config.json'
-config_util = ConfigUtility(configFileName)
-grokAPIKey = config_util.get_key('GROQ_API_KEY')
+def pdf2txt(linkedinURL):
 
-# os.environ["OPENAI_API_KEY"] = config("OPENAI_API_KEY")
-# os.environ["OPENAI_ORGANIZATION"] = config("OPENAI_ORGANIZATION_ID")
-
-# This is the main class that you will use to define your custom crew.
-# You can define as many agents and tasks as you want in agents.py and tasks.py
+    txtFilename = 'txt/' + get_filename_from_url(linkedinURL) + '.txt'
+    content = AcnPDFReader.fetch_pdf_content(linkedinURL)
+    write_string_to_file(content, txtFilename)
+    return txtFilename
 
 
-class HRCrew:
-    def __init__(self,jobPostingURL, linkedinURL):
-        self.jobPostingURL = jobPostingURL
-        self.linkedinURL = linkedinURL
+def get_filename_from_url(url):
+    path = pathlib.Path(url)
+    return path.name.split('.')[0]
 
-    def run(self):
-        # Define your custom agents and tasks in agents.py and tasks.py
-        agents = HRAgents()
-        tasks = HRTasks()
+def write_string_to_file(string, filename):
+    with open(filename, 'w') as f:
+        f.write(string)
 
-        # Define your custom agents and tasks here
-        recruiter = agents.Recruiter()
-        tech_expert = agents.TechnicalExpert()
-        hr_manager = agents.HrManager()
-
-        # Custom tasks include agent name and variables as input
-        recruitment = tasks.recruitment(
-            recruiter
-        )
-
-        tech_evaluation = tasks.tech_evaluation(
-            tech_expert
-        )
-
-        finilize_contract = tasks.finilize_contract(
-            hr_manager
-        )
-
-        get_job_description = tasks.get_job_description(
-            jobPostingURL,
-            linkedinURL,
-            config_util.get_key('companyURL'),
-            config_util.get_key('benefitsURL')
-        )
-
-        # Define your custom crew here
-        crew = Crew(
-            agents=[recruiter, tech_expert, hr_manager],
-            tasks=[get_job_description, recruitment, tech_evaluation, finilize_contract],
-            verbose=True,
-            process=Process.hierarchical,
-            manager_llm=ChatGroq(
-            api_key=grokAPIKey,
-            model="llama3-8b-8192"
-        )
-        )
-
-        result = crew.kickoff()
-        return result
-
-
-# This is the main function that you will use to run your custom crew.
-if __name__ == "__main__":
+def initCrew(jobPostingURL, candidateProfile):
+    
     print("## Welcome to HR Crew AI")
     print("-------------------------------")
-    # jobPostingURL = input(dedent("""Job Posting URL: """))
-    # linkedinURL = input(dedent("""Candidate Linkedin URL: """))
-    jobPostingURL = "https://www.accenture.com/gb-en/careers/jobdetails?id=R00181431_en&title=Java+Developer+-+Newcastle&c=car_glb_curateddailycondialogbox_12220771&n=otc_0621"
-    linkedinURL = "https://www.linkedin.com/in/muttahhid-jomeer/"
+    # jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00176185_en&title=Front-End%20Angular%20%2FReactJS%20Developer"
+    # linkedinURL = "https://adouti.com/wordpress/wp-content/uploads/2021/02/MiguelMresume-1.pdf"
+    # linkedinURL = "https://www.dayjob.com/downloads/CV_examples/java_developer_cv_template.pdf"
 
-    print("job: ", jobPostingURL)
-    print("Linkedin: ", linkedinURL)
+    print("Job Posting: ", jobPostingURL)
+    print("Candidate Portfolio: ", candidateProfile)
 
-    acn_hr_crew = HRCrew(jobPostingURL,linkedinURL)
+    acn_hr_crew = HRCrew(jobPostingURL, candidateProfile)
     result = acn_hr_crew.run()
     print("\n\n########################")
     print("## Here is you run result:")
     print("########################\n")
     print(result)
+
+# This is the main function that you will use to run your custom crew.
+if __name__ == "__main__":
+    # generate_cv_txt = pdf2txt(linkedinURL)
+    initCrew(jobPostingURL, linkedinURL)

@@ -1,7 +1,6 @@
 from crewai import Task
 from textwrap import dedent
 
-
 # This is an example of how to define custom tasks.
 # You can define as many tasks as you want.
 # You can also define custom agents in agents.py
@@ -55,6 +54,7 @@ class HRTasks:
             Reviewing the job posting to understand the requirements, preparing relevant questions to ask during the interview, and evaluating the candidate based on their responses, qualifications, and overall suitability for the role
             Handle to the tech expert for shortlisted candidates.
             Termiate/Conclude the interview process based on reports from other agents.
+            Make sure to include their name and portfolio link in your report
                                        
             {self.__tip_section()}
 
@@ -64,11 +64,12 @@ class HRTasks:
             human_input=True,
             expected_output=dedent(
                 f"""
-                Sourced candidates' LinkedIn profiles.
+                Sourced candidates' profiles.
                 Reviewed job postings for position understanding.
                 Prepared insightful interview questions.
                 Conducted first interviews, assessing cultural fit.
                 Evaluated candidates' qualifications and experiences.
+                Make sure to include their name and portfolio link in your report
         
             """
                 )
@@ -83,6 +84,7 @@ class HRTasks:
             Engage in a technical interview with a candidate by asking insightful questions based on the specific technology relevant to the job at hand. 
             Evaluate the candidate's responses and knowledge of the technology as outlined in the job description, ensuring that they align with the required skill set and expertise needed for the role.
             Generate a report based on the candidate evaluation and if candidate has good capabilities, pass to the HR manager for further actions.
+            Make sure to include their name and portfolio link in your report
 
             {self.__tip_section()}
        """
@@ -97,29 +99,39 @@ class HRTasks:
                 Negotiated salary, benefits, and perks.
                 Finalized contracts and ensured transparency.
                 Addressed candidate queries and concerns.
-        
+                Make sure to include their name and linkedin link in your report
+
                 """
             )
         )
 
 # common_tasks
-    def get_job_description(self,jobPostingURL, linkedinURL, companyLink, jobBenefitsLink):
+    def data_extraction(self, agent, jobPostingURL, candidateProfile, companyLink, jobBenefitsLink):
         return Task(
             description=dedent(
                 f"""
-            Hey, I know you're great at finding specific information online. Your next job involves scraping a job description from a given link. Here are the links:
-    
-            Job link: {jobPostingURL}
-            Candidate Profile: {linkedinURL}
-            Company Link: {companyLink}
-            Job Benefits Link: {jobBenefitsLink}
-        """
+                You are an advanced information retrieval system that specializes in extracting specific content from websites and documents on a variety of topics or subjects.
+                Your task is to fetch the content from websites and documents based on the provided parameters.
+                Use the AcnPDFReader tool in preference to fetch information
+
+                Here are the details you need to keep in mind:
+                
+                First, retrieve content from the following links/documents:
+                - Candidate CV: {candidateProfile}
+
+                Remember to format the report in markdown format with appropriate headings and sections for each link's analysis. The report should be well-organized and easy to read for quick reference.        
+                
+                """
             ),
+            agent=agent,
             expected_output=dedent(
                 f"""
-                Report with all the data fetched from all given websites. Format as sections as per websites in markdown.
-        
+                
+                Generate a report in markdown format with appropriate headings and sections for each link's analysis. 
+                The report should be well-organized and easy to read for quick reference.
+
                 """
-            )
+            ),
+            output_file="report.md"
             # agent=agent
         )
