@@ -8,10 +8,10 @@ linkedinURL = "https://www.dayjob.com/downloads/CV_examples/java_developer_cv_te
 
 def pdf2txt(linkedinURL):
 
-    txtFilename = 'txt/' + get_filename_from_url(linkedinURL) + '.txt'
+    # txtFilename = 'txt/' + get_filename_from_url(linkedinURL) + '.txt'
     content = AcnPDFReader.fetch_pdf_content(linkedinURL)
-    write_string_to_file(content, txtFilename)
-    return txtFilename
+    # write_string_to_file(content, txtFilename)
+    return content
 
 
 def get_filename_from_url(url):
@@ -42,5 +42,5 @@ def initCrew(jobPostingURL, candidateProfile):
 
 # This is the main function that you will use to run your custom crew.
 if __name__ == "__main__":
-    # generate_cv_txt = pdf2txt(linkedinURL)
-    initCrew(jobPostingURL, linkedinURL)
+    generate_cv_txt = pdf2txt(linkedinURL)
+    initCrew(jobPostingURL, generate_cv_txt)

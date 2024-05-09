@@ -40,21 +40,17 @@ class HRTasks:
         )
 
 # recruiter
-    def recruitment(self, agent):
+    def recruitment(self, agent, jobPostingURL, candidateProfile):
         return Task(
             description=dedent(
                 f"""
-            Using data from the web links retrieved, 
-            Act as first point of contact for the candidate during the interview process.
-            Guide through the recruitment process. 
-            Sourcing candidates, conducting initial screenings, and scheduling first interviews. 
-            Focus should be on introducing the candidate to the role, understanding their expectations, and evaluating their fit within the company culture. 
-            Managing communication with candidates at every stage of the hiring process.
-            Scanning their LinkedIn profile to gather insights
-            Reviewing the job posting to understand the requirements, preparing relevant questions to ask during the interview, and evaluating the candidate based on their responses, qualifications, and overall suitability for the role
-            Handle to the tech expert for shortlisted candidates.
-            Termiate/Conclude the interview process based on reports from other agents.
-            Make sure to include their name and portfolio link in your report
+                You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
+                Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
+                
+                Here is the text extracted from the candidate CV:
+                {candidateProfile}
+
+                Here is the link of the job posting: {jobPostingURL}
                                        
             {self.__tip_section()}
 
@@ -72,19 +68,25 @@ class HRTasks:
                 Make sure to include their name and portfolio link in your report
         
             """
-                )
+                ),
+            output_file="HRreport.md"
         )
 
 # tech
-    def tech_evaluation(self, agent):
+    def tech_evaluation(self, agent, jobPostingURL, candidateProfile):
         return Task(
             description=dedent(
                 f"""
-            Using the input from the recruiter and data from the web links retrieved,
-            Engage in a technical interview with a candidate by asking insightful questions based on the specific technology relevant to the job at hand. 
-            Evaluate the candidate's responses and knowledge of the technology as outlined in the job description, ensuring that they align with the required skill set and expertise needed for the role.
-            Generate a report based on the candidate evaluation and if candidate has good capabilities, pass to the HR manager for further actions.
-            Make sure to include their name and portfolio link in your report
+                Using the input from the recruiter and candidate profiles data,
+                Engage in a technical interview with a candidate by asking insightful questions based on the specific technology relevant to the job at hand. 
+                Evaluate the candidate's responses and knowledge of the technology as outlined in the job description, ensuring that they align with the required skill set and expertise needed for the role.
+                
+                Here is the candidate CV:
+                {candidateProfile}
+
+                Here is the link of the job posting: {jobPostingURL}
+
+                Generate a report based on the candidate evaluation and if candidate has good capabilities, pass to HR for further actions.
 
             {self.__tip_section()}
        """
@@ -94,15 +96,11 @@ class HRTasks:
             human_input=True,
             expected_output=dedent(
                 f"""
-                Conducted final candidate assessments.
-                Provided insights into company culture and objectives.
-                Negotiated salary, benefits, and perks.
-                Finalized contracts and ensured transparency.
-                Addressed candidate queries and concerns.
-                Make sure to include their name and linkedin link in your report
-
+                    Generate a report based on the candidate evaluation and if candidate has good capabilities, pass to HR for further actions.
                 """
-            )
+            ),
+            output_file="Techreport.md"
+
         )
 
 # common_tasks
@@ -110,14 +108,19 @@ class HRTasks:
         return Task(
             description=dedent(
                 f"""
-                You are an advanced information retrieval system that specializes in extracting specific content from websites and documents on a variety of topics or subjects.
-                Your task is to fetch the content from websites and documents based on the provided parameters.
-                Use the AcnPDFReader tool in preference to fetch information
+                You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
+                Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
+                Here is the text extracted from the candidate CV:
+                {candidateProfile}
 
-                Here are the details you need to keep in mind:
-                
-                First, retrieve content from the following links/documents:
-                - Candidate CV: {candidateProfile}
+                The task requires you to analyze the text extracted from a candidate CV and extract the following information:
+                - Job Description and Qualifications: Extract the details outlining the job role and the qualifications required.
+                - Candidate Details: Gather all relevant information about the candidate, including their name, work experiences, and strengths.
+                - Company Information: Identify details about the company mentioned in the CV.
+                - Job Benefits/Worklife: Look for information regarding the benefits offered by the job position and insights into the work-life balance.
+                - Evaluation of Candidate Fit: Evaluate whether the candidate is the best fit for the position based on the extracted information.
+                You need to delve into the text provided, interpret the data accurately, and provide a comprehensive analysis based on the requirements mentioned.
+                For example, when analyzing candidate details, you should focus on extracting specific work experiences, strengths, and qualifications that align with the job description. This will help in determining the candidate's suitability for the position.
 
                 Remember to format the report in markdown format with appropriate headings and sections for each link's analysis. The report should be well-organized and easy to read for quick reference.        
                 
@@ -135,3 +138,4 @@ class HRTasks:
             output_file="report.md"
             # agent=agent
         )
+    

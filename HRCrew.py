@@ -27,46 +27,53 @@ class HRCrew:
         agents = HRAgents()
         tasks = HRTasks()
 
-        # Define your custom agents and tasks here
-        # recruiter = agents.Recruiter()
-        # tech_expert = agents.TechnicalExpert()
+        # Define your custom agcents and tasks here
+        recruiter = agents.Recruiter(
+            self.jobPostingURL,
+            self.candidateProfile
+        )
+        tech_expert = agents.TechnicalExpert()
         # hr_manager = agents.HrManager()
-        digital_agent = agents.DigitalAgent(self.candidateProfile)
+        # digital_agent = agents.DigitalAgent(self.candidateProfile)
 
         # Custom tasks include agent name and variables as input
-        # recruitment = tasks.recruitment(
-        #     recruiter
-        # )
+        recruitment = tasks.recruitment(
+            recruiter,
+            self.jobPostingURL,
+            self.candidateProfile
+        )
 
-        # tech_evaluation = tasks.tech_evaluation(
-        #     tech_expert
-        # )
+        tech_evaluation = tasks.tech_evaluation(
+            tech_expert,
+            self.jobPostingURL,
+            self.candidateProfile
+        )
 
         # finilize_contract = tasks.finilize_contract(
         #     hr_manager
         # )
 
-        data_extraction = tasks.data_extraction(
-            digital_agent,
-            self.jobPostingURL,
-            self.candidateProfile,
-            config_util.get_key('companyURL'),
-            config_util.get_key('benefitsURL')
-        )
+        # data_extraction = tasks.data_extraction(
+        #     digital_agent,
+        #     self.jobPostingURL,
+        #     self.candidateProfile,
+        #     config_util.get_key('companyURL'),
+        #     config_util.get_key('benefitsURL')
+        # )
 
         # Define your custom crew here
         crew = Crew(
             # agents=[recruiter, tech_expert, hr_manager],
-            # tasks=[get_job_description, recruitment, tech_evaluation, finilize_contract],
-            agents=[digital_agent],
-            tasks=[data_extraction],
+            # tasks=[recruitment, tech_evaluation, finilize_contract],
+            agents=[recruiter, tech_expert],
+            tasks=[recruitment, tech_evaluation],
             verbose=True,
-            # process=Process.sequential
-            process=Process.hierarchical,
-            manager_llm=ChatGroq(
-                api_key=grokAPIKey,
-                model="llama3-8b-8192"
-            )
+            process=Process.sequential
+            # process=Process.hierarchical,
+            # manager_llm=ChatGroq(
+            #     api_key=grokAPIKey,
+            #     model="llama3-8b-8192"
+            # )
         )
 
         result = crew.kickoff()
