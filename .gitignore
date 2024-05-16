@@ -1,7 +1,11 @@
 #ignore this in github
+.gitignore
 
 # environment variables
 .env
 
 #Cache folders
 __pycache__/
+
+db/*
+history/*

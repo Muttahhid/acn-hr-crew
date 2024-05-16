@@ -2,9 +2,11 @@ from HRCrew import HRCrew
 from tools.AcnPDFReader import AcnPDFReader
 import pathlib
 
-jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00176185_en&title=Front-End%20Angular%20%2FReactJS%20Developer"
+jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00176183_en"
 # linkedinURL = "https://adouti.com/wordpress/wp-content/uploads/2021/02/MiguelMresume-1.pdf"
-linkedinURL = "https://www.dayjob.com/downloads/CV_examples/java_developer_cv_template.pdf"
+# linkedinURL = "https://www.dayjob.com/downloads/CV_examples/java_developer_cv_template.pdf"
+# linkedinURL = "https://www.avinashmeetoo.com/other/cv/20240506-avinash-meetoo-cv.pdf"
+linkedinURL = "pdf/20240506-avinash-meetoo-cv.pdf"
 
 def pdf2txt(linkedinURL):
 
@@ -26,15 +28,13 @@ def initCrew(jobPostingURL, candidateProfile):
     
     print("## Welcome to HR Crew AI")
     print("-------------------------------")
-    # jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00176185_en&title=Front-End%20Angular%20%2FReactJS%20Developer"
-    # linkedinURL = "https://adouti.com/wordpress/wp-content/uploads/2021/02/MiguelMresume-1.pdf"
-    # linkedinURL = "https://www.dayjob.com/downloads/CV_examples/java_developer_cv_template.pdf"
 
     print("Job Posting: ", jobPostingURL)
     print("Candidate Portfolio: ", candidateProfile)
 
     acn_hr_crew = HRCrew(jobPostingURL, candidateProfile)
     result = acn_hr_crew.run()
+
     print("\n\n########################")
     print("## Here is you run result:")
     print("########################\n")
@@ -42,5 +42,5 @@ def initCrew(jobPostingURL, candidateProfile):
 
 # This is the main function that you will use to run your custom crew.
 if __name__ == "__main__":
-    generate_cv_txt = pdf2txt(linkedinURL)
-    initCrew(jobPostingURL, generate_cv_txt)
+    # generate_cv_txt = pdf2txt(linkedinURL)
+    initCrew(jobPostingURL, linkedinURL)

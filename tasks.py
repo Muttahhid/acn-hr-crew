@@ -7,37 +7,9 @@ from textwrap import dedent
 class HRTasks:
     def __tip_section(self):
         return "If you do your BEST WORK, I'll give you a $10,000 commission!"
-
-# hr_manager
-    def finilize_contract(self, agent):
-        return Task(
-            description=dedent(
-                f"""
-            Using the input from the recruiter and the tech expert and data from the web links retrieved,
-            Conduct final assessments for candidates to assess their suitability for the roles they have applied for. 
-            During this process, provide them with insights into the company's working environment, conditions, working schedule, and overarching objectives. Following this, you will engage in negotiations regarding salary, benefits, and any other perks that align with the candidate's expectations. 
-            Finally, finalize the contracts with the selected candidates to formalize their employment with the company.
-            Maintain a professional and empathetic tone throughout the interactions with the candidates, ensuring transparency and clarity in all communication. 
-            Be prepared to address any queries or concerns candidates may have while presenting the best possible employment offers that meet both their needs and the company's requirements.
-            
-            {self.__tip_section()}
     
-        """
-            ),
-            agent=agent,
-            human_input=True,
-            # context=[self.recruitment(), self.tech_evaluation()],
-            expected_output=dedent(
-                f"""
-            Conducted final candidate assessments.
-            Provided insights into company culture and objectives.
-            Negotiated salary, benefits, and perks.
-            Finalized contracts and ensured transparency.
-            Addressed candidate queries and concerns.
-    
-        """
-            )
-        )
+    def __notes_links(self):
+        return "YOU WILL USE ONLY LINKS GIVEN TO YOU AND NOT WHAT YOU KNOW"
 
 # recruiter
     def recruitment(self, agent, jobPostingURL, candidateProfile):
@@ -47,17 +19,18 @@ class HRTasks:
                 You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
                 Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
                 
-                Here is the text extracted from the candidate CV:
+                Candidate CV PDF file path:
                 {candidateProfile}
 
-                Here is the link of the job posting: {jobPostingURL}
+                Here is the web link of the job description: {jobPostingURL}
                                        
-            {self.__tip_section()}
+                {self.__tip_section()}
+                                       
+                {self.__notes_links()}
 
-        """
+            """
             ),
             agent=agent,
-            human_input=True,
             expected_output=dedent(
                 f"""
                 Sourced candidates' profiles.
@@ -88,12 +61,13 @@ class HRTasks:
 
                 Generate a report based on the candidate evaluation and if candidate has good capabilities, pass to HR for further actions.
 
-            {self.__tip_section()}
-       """
+                {self.__tip_section()}
+
+                {self.__notes_links()}
+            """
             ),
             # context=[self.recruitment()],
             agent=agent,
-            human_input=True,
             expected_output=dedent(
                 f"""
                     Generate a report based on the candidate evaluation and if candidate has good capabilities, pass to HR for further actions.
@@ -101,6 +75,37 @@ class HRTasks:
             ),
             output_file="Techreport.md"
 
+        )
+
+# hr_manager
+    def finilize_contract(self, agent):
+        return Task(
+            description=dedent(
+                f"""
+            Using the input from the recruiter and the tech expert and data from the web links retrieved,
+            Conduct final assessments for candidates to assess their suitability for the roles they have applied for. 
+            During this process, provide them with insights into the company's working environment, conditions, working schedule, and overarching objectives. Following this, you will engage in negotiations regarding salary, benefits, and any other perks that align with the candidate's expectations. 
+            Finally, finalize the contracts with the selected candidates to formalize their employment with the company.
+            Maintain a professional and empathetic tone throughout the interactions with the candidates, ensuring transparency and clarity in all communication. 
+            Be prepared to address any queries or concerns candidates may have while presenting the best possible employment offers that meet both their needs and the company's requirements.
+            
+            {self.__tip_section()}
+    
+        """
+            ),
+            agent=agent,
+            human_input=True,
+            # context=[self.recruitment(), self.tech_evaluation()],
+            expected_output=dedent(
+                f"""
+            Conducted final candidate assessments.
+            Provided insights into company culture and objectives.
+            Negotiated salary, benefits, and perks.
+            Finalized contracts and ensured transparency.
+            Addressed candidate queries and concerns.
+    
+        """
+            )
         )
 
 # common_tasks

@@ -1,84 +1,97 @@
+import os
 from crewai import Agent
 from textwrap import dedent
 # from langchain_community.llms import OpenAI, Ollama
 # from langchain_openai import ChatOpenAI
+from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 # from langchain_community.llms import Ollama
-from langchain_community.tools import DuckDuckGoSearchRun
+# from langchain_community.tools import DuckDuckGoSearchRun
 from langchain.agents import Tool
 from crewai_tools import ScrapeWebsiteTool, PDFSearchTool, WebsiteSearchTool, FileReadTool
 
 from tools.AcnPDFReader import AcnPDFReader
 from tools.AcnUserPrompts import AcnUserPrompts
+from tools.AcnWebScraper import AcnWebScraper
 from utils.config_utils import ConfigUtility
 
-configFileName='config.json'
-config_util = ConfigUtility(configFileName)
-grokAPIKey = config_util.get_key('GROQ_API_KEY')
 
-        
-search = DuckDuckGoSearchRun()
-search_tool = Tool(
-    name="duckduckgo_search", #match the name from crewai's Action: duckduckgo_search
-    description="A search tool used to query DuckDuckGoSearchRun for search results when trying to find information from the internet.",
-    func=DuckDuckGoSearchRun().run
-)
-# To enable scrapping any website it finds during it's execution
-scrape_tool = ScrapeWebsiteTool()
-pdf_scrape_tool = PDFSearchTool()
-# web_search_tool = WebsiteSearchTool()
+load_dotenv()
 
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+LLM_MODEL = os.getenv('LLM_MODEL')
 
 # This is an example of how to define custom agents.
 # You can define as many agents as you want.
 # You can also define custom tasks in tasks.py
 class HRAgents:
-    def __init__(self):
-        # self.OpenAIGPT35 = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
-        # self.OpenAIGPT4 = ChatOpenAI(model_name="gpt-4", temperature=0.7)
+    def __init__(self, jobPostingURL, candidateProfile):
+
         # self.Ollama = Ollama(model="llama3:latest")
         self.Groq = ChatGroq(
-            api_key=grokAPIKey,
-            model="llama3-8b-8192"
+            api_key=GROQ_API_KEY,
+            model=LLM_MODEL
+        )
+        # self.scrape_tool = ScrapeWebsiteTool(
+        #     url=jobPostingURL
+        # )
+        self.scrape_tool = AcnWebScraper.fetch_web_content
+        self.pdf_scrape_tool = PDFSearchTool(
+            pdf=candidateProfile,
+            config=dict(
+                llm=dict(
+                    provider="groq", # 'openai', 'azure_openai', 'anthropic', 'huggingface', 'cohere', 'together', 'gpt4all', 'ollama', 'jina', 'llama2', 'vertexai', 'google', 'aws_bedrock', 'mistralai', 'vllm', 'groq', 'nvidia'
+                    config=dict(
+                        model=LLM_MODEL,
+                        # temperature=0.5,
+                        # top_p=1,
+                        # stream=true,
+                    ),
+                ),
+                embedder=dict(
+                    provider="gpt4all", # or openai, ollama, ...
+                    config=dict(
+                        model="all-MiniLM-L6-v2.gguf2.f16.gguf"
+                        # task_type="retrieval_document",
+                        # title="Embeddings",
+                    ),
+                ),
+            )
         )
 
-    def Recruiter(self, jobPostingURL, candidateProfile):
+    def Recruiter(self):
         return Agent(
             role="Experienced Recruiter",
             backstory=dedent(f"""
-                As an experienced recruiter with a keen eye for talent, your role encompasses sourcing candidates, conducting initial screenings, scheduling first interviews, and managing communication with candidates throughout the hiring process. You play a crucial role in the recruitment process by conducting the first interview, where you focus on introducing the candidate, setting expectations, and assessing cultural fit. For the task at hand, you are required to analyse candidate profiles to gather insights into candidates' professional backgrounds, review job postings to understand the requirements, prepare insightful interview questions, and evaluate candidates based on their qualifications, experience, responses during the interview, and overall fit for the role. 
+                You are a professional Recruiter who matches qualified individuals with specific open positions at an organization.
+                For the task at hand, you are required to analyse candidate profiles to gather insights into candidates' professional backgrounds, review job postings to understand the requirements, prepare insightful interview questions, and evaluate candidates based on their qualifications, experience, responses during the interview, and overall fit for the role. 
 
-                Here is the candidate CV:
-                {candidateProfile}
-
-                Here is the link of the job posting: {jobPostingURL}
-
-                By meticulously following these steps, you aim to identify top talent, facilitate successful interviews, and ultimately make informed decisions that benefit both the candidates and the hiring companies.
             """),
             goal=dedent(f"""
-                To identify top talent, facilitate successful interviews, and make informed decisions that benefit both the candidates and the hiring companies.
+                To identify top talent and make informed decisions that benefit both the candidates and the hiring companies to match their skill sets and requirements.
             """),
             # tools=[tool_1, tool_2],
-            allow_delegation=True,
+            allow_delegation=False,
             verbose=True,
             llm=self.Groq,
-            # tools=[scrape_tool, search_tool, pdf_scrape_tool]
+            tools=[self.scrape_tool, self.pdf_scrape_tool]
         )
 
     def TechnicalExpert(self):
         return Agent(
             role="Technical Expert",
             backstory=dedent(f"""
-                As a Technical Expert, your role involves conducting technical interviews for candidates who have passed the initial screening. You are tasked with assessing candidates' proficiency in specific technology skills required for the job and providing feedback to the recruiter based on their technical abilities. During the interview, you will ask tech questions tailored to the job's technology requirements, evaluate the candidate's problem-solving abilities, coding skills, and understanding of relevant concepts in the field. For example, for a software engineering role, you would focus on programming languages, data structures, algorithms, and system design, expecting candidates to demonstrate their ability to write clean and efficient code, explain their problem-solving approach, and showcase their understanding of software development principles.
+                As a technical expert in the hiring process, you are someone who handles sourcing, screening, interviewing, and selecting candidates for technical roles within an organization. 
+                You will assess candidates technical skills, experience, and qualifications to ensure a good fit for specific technical positions
             """),
             goal=dedent(f"""
                 To assess candidates' technical skills and knowledge relevant to the job and provide feedback to the recruiter on their technical abilities.
             """),
             # tools=[tool_1, tool_2],
-            allow_delegation=False,
+            allow_delegation=True,
             verbose=True,
             llm=self.Groq,
-            # tools=[scrape_tool, search_tool, pdf_scrape_tool]
+            tools=[self.scrape_tool, self.pdf_scrape_tool]
         )
    
     # def HrManager(self):
