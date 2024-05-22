@@ -36,11 +36,11 @@ class HRCrew:
             self.candidateProfile
         )
 
-        # tech_evaluation = tasks.tech_evaluation(
-        #     tech_expert,
-        #     self.jobPostingURL,
-        #     self.candidateProfile
-        # )
+        tech_evaluation = tasks.tech_evaluation(
+            tech_expert,
+            self.jobPostingURL,
+            self.candidateProfile
+        )
 
         # finilize_contract = tasks.finilize_contract(
         #     hr_manager
@@ -56,15 +56,15 @@ class HRCrew:
 
         # Define your custom crew here
         crew = Crew(
-            agents=[recruiter],
-            tasks=[recruitment],
+            agents=[recruiter, tech_expert],
+            tasks=[recruitment, tech_evaluation],
             verbose=True,
-            process=Process.sequential
-            # process=Process.hierarchical,
-            # manager_llm=ChatGroq(
-            #     api_key=GROQ_API_KEY,
-            #     model=LLM_MODEL
-            # )
+            # process=Process.sequential
+            process=Process.hierarchical,
+            manager_llm=ChatGroq(
+                api_key=GROQ_API_KEY,
+                model=LLM_MODEL
+            )
         )
 
         result = crew.kickoff()
