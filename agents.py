@@ -88,48 +88,49 @@ class HRAgents:
                 To assess candidates' technical skills and knowledge relevant to the job and provide feedback to the recruiter on their technical abilities.
             """),
             # tools=[tool_1, tool_2],
-            allow_delegation=True,
+            allow_delegation=False,
             verbose=True,
             llm=self.Groq,
             tools=[self.scrape_tool, self.pdf_scrape_tool]
         )
    
-    # def HrManager(self):
-    #     return Agent(
-    #         role="HR Manager/Representative",
-    #         backstory=dedent(f"""
-    #             As an HR Manager/Representative, your responsibilities include finalizing the selection process for candidates who excel in technical interviews. You are tasked with negotiating payroll, benefits, and job conditions with chosen candidates to ensure alignment between their expectations and what the company can offer. Additionally, you facilitate the smooth onboarding process for new hires. For the task at hand, you will conduct final assessments for candidates, providing insights into the company's working environment, conditions, working schedule, and overarching objectives. You will engage in negotiations regarding salary, benefits, and any other perks that align with the candidate's expectations. Finally, you will be responsible for finalizing contracts with selected candidates to formalize their employment with the company. Throughout these interactions, maintaining a professional and empathetic tone is essential, ensuring transparency and clarity in all communication and addressing any queries or concerns candidates may have while presenting the best possible employment offers that meet both their needs and the company's requirements.
-    #         """),
-    #         goal=dedent(f"""
-    #             To finalize the selection process for candidates by negotiating payroll, benefits, and job conditions, ensuring alignment between candidate expectations and company offerings, and facilitating the smooth onboarding process for new hires.
-    #         """),
-    #         # tools=[tool_1, tool_2],
-    #         allow_delegation=False,
-    #         verbose=True,
-    #         llm=self.Groq,
-    #         tool=[scrape_tool, search_tool]
-    #     )
-   
-    def DigitalAgent(self, candidateProfile):
-
+    def HrManager(self):
         return Agent(
-            role="Digital Agent",
+            role="HR Manager/Representative",
             backstory=dedent(f"""
-               You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
-                Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
-                Here is the text extracted from the candidate CV:
-                {candidateProfile}
+                As an HR Manager/Representative, your responsibilities include finalizing the selection process for candidates who excel in technical interviews.
+                You will make the final assessment on the candidate based on the Recruiter and the technical evaluation reports.
             """),
             goal=dedent(f"""
-                Remember to focus on accuracy, relevancy, and ensuring that the extracted content aligns with the given parameters. 
-                Ensure that the content is presented in a clear and concise manner for easy comprehension.
-                        
-                Format the report in markdown format with appropriate headings and sections for each link's analysis. The report should be well-organized and easy to read for quick reference.
+                To finalize the selection process for candidates by negotiating payroll, benefits, and job conditions, ensuring alignment between candidate expectations and company offerings, and facilitating the smooth onboarding process for new hires.
             """),
             # tools=[tool_1, tool_2],
             allow_delegation=False,
             verbose=True,
             llm=self.Groq,
-            tools=[]
+            tool=[self.scrape_tool,  self.pdf_scrape_tool]
         )
+   
+    # def DigitalAgent(self, candidateProfile):
+
+    #     return Agent(
+    #         role="Digital Agent",
+    #         backstory=dedent(f"""
+    #            You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
+    #             Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
+    #             Here is the text extracted from the candidate CV:
+    #             {candidateProfile}
+    #         """),
+    #         goal=dedent(f"""
+    #             Remember to focus on accuracy, relevancy, and ensuring that the extracted content aligns with the given parameters. 
+    #             Ensure that the content is presented in a clear and concise manner for easy comprehension.
+                        
+    #             Format the report in markdown format with appropriate headings and sections for each link's analysis. The report should be well-organized and easy to read for quick reference.
+    #         """),
+    #         # tools=[tool_1, tool_2],
+    #         allow_delegation=False,
+    #         verbose=True,
+    #         llm=self.Groq,
+    #         tools=[]
+    #     )
     
