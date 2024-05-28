@@ -5,10 +5,10 @@ from textwrap import dedent
 # from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
-# from langchain_community.llms import Ollama
+from langchain_community.llms import Ollama
 # from langchain_community.tools import DuckDuckGoSearchRun
 from langchain.agents import Tool
-from crewai_tools import ScrapeWebsiteTool, PDFSearchTool, WebsiteSearchTool, FileReadTool
+from crewai_tools import ScrapeWebsiteTool, PDFSearchTool, DirectoryReadTool
 
 from tools.AcnPDFReader import AcnPDFReader
 from tools.AcnUserPrompts import AcnUserPrompts
@@ -27,8 +27,8 @@ LLM_MODEL = os.getenv('LLM_MODEL')
 class HRAgents:
     def __init__(self, jobPostingURL, candidateProfile):
 
-        # self.Ollama = Ollama(model="llama3:latest")
-        self.Groq = ChatGroq(
+        # self.LLM = Ollama(model="llama3:latest")
+        self.LLM = ChatGroq(
             api_key=GROQ_API_KEY,
             model=LLM_MODEL
         )
@@ -36,8 +36,9 @@ class HRAgents:
         #     url=jobPostingURL
         # )
         self.scrape_tool = AcnWebScraper.fetch_web_content
+        self.list_dir = DirectoryReadTool(directory=candidateProfile)
         self.pdf_scrape_tool = PDFSearchTool(
-            pdf=candidateProfile,
+            # pdf=candidateProfile,
             config=dict(
                 llm=dict(
                     provider="groq", # 'openai', 'azure_openai', 'anthropic', 'huggingface', 'cohere', 'together', 'gpt4all', 'ollama', 'jina', 'llama2', 'vertexai', 'google', 'aws_bedrock', 'mistralai', 'vllm', 'groq', 'nvidia'
@@ -73,8 +74,8 @@ class HRAgents:
             # tools=[tool_1, tool_2],
             allow_delegation=False,
             verbose=True,
-            llm=self.Groq,
-            tools=[self.scrape_tool, self.pdf_scrape_tool]
+            llm=self.LLM,
+            tools=[self.scrape_tool,self.list_dir, self.pdf_scrape_tool]
         )
 
     def TechnicalExpert(self):
@@ -90,8 +91,8 @@ class HRAgents:
             # tools=[tool_1, tool_2],
             allow_delegation=False,
             verbose=True,
-            llm=self.Groq,
-            tools=[self.scrape_tool, self.pdf_scrape_tool]
+            llm=self.LLM,
+            tools=[self.scrape_tool, self.list_dir, self.pdf_scrape_tool]
         )
    
     def HrManager(self):
@@ -107,8 +108,8 @@ class HRAgents:
             # tools=[tool_1, tool_2],
             allow_delegation=False,
             verbose=True,
-            llm=self.Groq,
-            tool=[self.scrape_tool,  self.pdf_scrape_tool]
+            llm=self.LLM,
+            tool=[self.scrape_tool, self.list_dir, self.pdf_scrape_tool]
         )
    
     # def DigitalAgent(self, candidateProfile):

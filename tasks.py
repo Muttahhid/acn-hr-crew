@@ -19,16 +19,17 @@ class HRTasks:
                 You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
                 Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
                 
-                Candidate CV PDF file path:
+                Directory path containing CV:
                 {candidateProfile}
 
                 Here is the web link of the job description: {jobPostingURL}
 
-                Generate a report with the following sections based on the candidate skills and evaluations made
-                - Sourced candidates' profiles.
+                For each PDF,
+                Generate a report with the following sections based on each candidate skills and evaluations made
+                - Sourced candidates' profile.
                 - Reviewed job postings for position understanding.
                 - Prepared insightful interview questions.
-                - Evaluated candidates' qualifications and experiences.
+                - Evaluate each candidates' qualifications and work experiences.
                 - Make sure to include their name in your report
                                        
                 {self.__tip_section()}
@@ -40,11 +41,12 @@ class HRTasks:
             agent=agent,
             expected_output=dedent(
                 f"""
-                Generate a report with the following sections based on the candidate skills and evaluations made
+                For each PDF,
+                Generate a report with the following sections based on each candidate skills and evaluations made
                 - Sourced candidates' profile.
                 - Reviewed job postings for position understanding.
                 - Prepared insightful interview questions.
-                - Evaluated candidates' qualifications and work experiences.
+                - Evaluate each candidates' qualifications and work experiences.
                 - Make sure to include their name in your report
 
             """
@@ -61,7 +63,7 @@ class HRTasks:
                 Engage in a technical interview with a candidate by asking insightful questions based on the specific technology relevant to the job at hand. 
                 Evaluate the candidate's responses and knowledge of the technology as outlined in the job description, ensuring that they align with the required skill set and expertise needed for the role.
                 
-                Here is the candidate CV:
+                Directory path containing CV:
                 {candidateProfile}
 
                 Here is the link of the job posting: {jobPostingURL}

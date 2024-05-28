@@ -2,11 +2,12 @@ from HRCrew import HRCrew
 from tools.AcnPDFReader import AcnPDFReader
 import pathlib
 
-jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00176183_en"
+jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00181345_en"
 # linkedinURL = "https://adouti.com/wordpress/wp-content/uploads/2021/02/MiguelMresume-1.pdf"
 # linkedinURL = "https://www.dayjob.com/downloads/CV_examples/java_developer_cv_template.pdf"
 # linkedinURL = "https://www.avinashmeetoo.com/other/cv/20240506-avinash-meetoo-cv.pdf"
-candidateProfile = "pdf/CV-VijayTambe-JavaDeveloper.pdf"
+# candidateProfile = "pdf/CV-VijayTambe-JavaDeveloper.pdf"
+candidateProfile = "./pdf"
 
 def pdf2txt(filename):
 
