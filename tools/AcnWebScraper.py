@@ -6,9 +6,9 @@ class AcnWebScraper():
 
     # Tool to fetch and preprocess web text
     @tool("Tool to extract text from a given URL")
-    def fetch_web_content(url: str) -> str:
+    def extract_web_content(url: str) -> str:
         """
-        Fetches and preprocesses text from a webpage given its URL.
+        Extract and preprocesses text from a webpage given its URL.
         Returns the text of the webpage.
         """
         response = requests.get(url)

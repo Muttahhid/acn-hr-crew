@@ -12,25 +12,26 @@ class HRTasks:
         return "YOU WILL USE ONLY LINKS GIVEN TO YOU AND NOT WHAT YOU KNOW"
 
 # recruiter
-    def recruitment(self, agent, jobPostingURL, candidateProfile):
+    def recruitment(self, agent, jobPostingURL, applicantData):
         return Task(
             description=dedent(
                 f"""
                 You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
                 Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
                 
-                Directory path containing CV:
-                {candidateProfile}
-
                 Here is the web link of the job description: {jobPostingURL}
+                
+                Here is the information of applicants:
+                {applicantData}
 
-                For each PDF,
-                Generate a report with the following sections based on each candidate skills and evaluations made
-                - Sourced candidates' profile.
-                - Reviewed job postings for position understanding.
-                - Prepared insightful interview questions.
-                - Evaluate each candidates' qualifications and work experiences.
-                - Make sure to include their name in your report
+                For each applicant, 
+                - Generate a report in Markdown format with the following sections based on each candidate skills and evaluations made
+                    - Sourced candidates' profile.
+                    - Reviewed job postings for position understanding.
+                    - Prepared insightful interview questions.
+                    - Evaluate each candidates' qualifications and work experiences.
+                    - Make sure to include their name in your report
+                    - Section with Passed and Failed candidates
                                        
                 {self.__tip_section()}
                                        
@@ -41,13 +42,14 @@ class HRTasks:
             agent=agent,
             expected_output=dedent(
                 f"""
-                For each PDF,
-                Generate a report with the following sections based on each candidate skills and evaluations made
-                - Sourced candidates' profile.
-                - Reviewed job postings for position understanding.
-                - Prepared insightful interview questions.
-                - Evaluate each candidates' qualifications and work experiences.
-                - Make sure to include their name in your report
+                For each applicant, 
+                - Generate a report in Markdown format with the following sections based on each candidate skills and evaluations made
+                    - Sourced candidates' profile.
+                    - Reviewed job postings for position understanding.
+                    - Prepared insightful interview questions.
+                    - Evaluate each candidates' qualifications and work experiences.
+                    - Make sure to include their name in your report
+                    - Section with Passed and Failed candidates
 
             """
                 ),

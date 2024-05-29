@@ -13,13 +13,13 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 LLM_MODEL = os.getenv('LLM_MODEL')
 
 class HRCrew:
-    def __init__(self,jobPostingURL, candidateProfile):
+    def __init__(self,jobPostingURL, applicantData):
         self.jobPostingURL = jobPostingURL
-        self.candidateProfile = candidateProfile
+        self.applicantData = applicantData
 
     def run(self):
         # Define your custom agents and tasks in agents.py and tasks.py
-        agents = HRAgents(self.jobPostingURL, self.candidateProfile)
+        agents = HRAgents(self.applicantData)
         tasks = HRTasks()
 
         # Define your custom agcents and tasks here
@@ -34,13 +34,13 @@ class HRCrew:
         recruitment = tasks.recruitment(
             recruiter,
             self.jobPostingURL,
-            self.candidateProfile
+            self.applicantData
         )
 
         tech_evaluation = tasks.tech_evaluation(
             tech_expert,
             self.jobPostingURL,
-            self.candidateProfile
+            self.applicantData
         )
 
         finilize_contract = tasks.finilize_contract(
@@ -57,8 +57,8 @@ class HRCrew:
 
         # Define your custom crew here
         crew = Crew(
-            agents=[recruiter, tech_expert, hr_manager],
-            tasks=[recruitment, tech_evaluation, finilize_contract],
+            agents=[recruiter],
+            tasks=[recruitment],
             verbose=True,
             process=Process.sequential
             # process=Process.hierarchical,

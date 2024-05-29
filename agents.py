@@ -1,64 +1,68 @@
 import os
 from crewai import Agent
 from textwrap import dedent
-# from langchain_community.llms import OpenAI, Ollama
-# from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
-from langchain_community.llms import Ollama
+from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_community.llms import Ollama
 # from langchain_community.tools import DuckDuckGoSearchRun
 from langchain.agents import Tool
-from crewai_tools import ScrapeWebsiteTool, PDFSearchTool, DirectoryReadTool
+from crewai_tools import PDFSearchTool, DirectoryReadTool, FileReadTool
 
 from tools.AcnPDFReader import AcnPDFReader
-from tools.AcnUserPrompts import AcnUserPrompts
 from tools.AcnWebScraper import AcnWebScraper
-from utils.config_utils import ConfigUtility
-
 
 load_dotenv()
 
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 LLM_MODEL = os.getenv('LLM_MODEL')
 
 # This is an example of how to define custom agents.
 # You can define as many agents as you want.
 # You can also define custom tasks in tasks.py
 class HRAgents:
-    def __init__(self, jobPostingURL, candidateProfile):
+    def __init__(self, applicantData):
 
         # self.LLM = Ollama(model="llama3:latest")
         self.LLM = ChatGroq(
             api_key=GROQ_API_KEY,
             model=LLM_MODEL
         )
-        # self.scrape_tool = ScrapeWebsiteTool(
-        #     url=jobPostingURL
+        # self.LLM = ChatGoogleGenerativeAI(model=LLM_MODEL,
+        #     verbose=True,
+        #     temperature=0.5,
+        #     google_api_key=GOOGLE_API_KEY
         # )
-        self.scrape_tool = AcnWebScraper.fetch_web_content
-        self.list_dir = DirectoryReadTool(directory=candidateProfile)
-        self.pdf_scrape_tool = PDFSearchTool(
-            # pdf=candidateProfile,
-            config=dict(
-                llm=dict(
-                    provider="groq", # 'openai', 'azure_openai', 'anthropic', 'huggingface', 'cohere', 'together', 'gpt4all', 'ollama', 'jina', 'llama2', 'vertexai', 'google', 'aws_bedrock', 'mistralai', 'vllm', 'groq', 'nvidia'
-                    config=dict(
-                        model=LLM_MODEL,
-                        # temperature=0.5,
-                        # top_p=1,
-                        # stream=true,
-                    ),
-                ),
-                embedder=dict(
-                    provider="gpt4all", # or openai, ollama, ...
-                    config=dict(
-                        model="all-MiniLM-L6-v2.gguf2.f16.gguf"
-                        # task_type="retrieval_document",
-                        # title="Embeddings",
-                    ),
-                ),
-            )
-        )
+
+        self.scrape_tool = AcnWebScraper.extract_web_content
+        # self.file_read_tool = FileReadTool(file_path=applicantData)
+
+        # self.list_dir = DirectoryReadTool(directory=candidateProfile)
+        self.pdf_scrape_tool = AcnPDFReader.read_pdf_file
+
+        # self.pdf_scrape_tool = PDFSearchTool(
+        #     pdf=candidateProfile,
+        #     # config=dict(
+        #     #     llm=dict(
+        #     #         provider="groq", # 'openai', 'azure_openai', 'anthropic', 'huggingface', 'cohere', 'together', 'gpt4all', 'ollama', 'jina', 'llama2', 'vertexai', 'google', 'aws_bedrock', 'mistralai', 'vllm', 'groq', 'nvidia'
+        #     #         config=dict(
+        #     #             model=LLM_MODEL,
+        #     #             # temperature=0.5,
+        #     #             # top_p=1,
+        #     #             # stream=true,
+        #     #         ),
+        #     #     ),
+        #     #     embedder=dict(
+        #     #         provider="gpt4all", # or openai, ollama, ...
+        #     #         config=dict(
+        #     #             model="all-MiniLM-L6-v2.gguf2.f16.gguf"
+        #     #             # task_type="retrieval_document",
+        #     #             # title="Embeddings",
+        #     #         ),
+        #     #     ),
+        #     # )
+        # )
 
     def Recruiter(self):
         return Agent(
@@ -75,7 +79,7 @@ class HRAgents:
             allow_delegation=False,
             verbose=True,
             llm=self.LLM,
-            tools=[self.scrape_tool,self.list_dir, self.pdf_scrape_tool]
+            tools=[self.scrape_tool, self.pdf_scrape_tool]
         )
 
     def TechnicalExpert(self):
@@ -92,7 +96,7 @@ class HRAgents:
             allow_delegation=False,
             verbose=True,
             llm=self.LLM,
-            tools=[self.scrape_tool, self.list_dir, self.pdf_scrape_tool]
+            tools=[self.scrape_tool]
         )
    
     def HrManager(self):
@@ -109,7 +113,7 @@ class HRAgents:
             allow_delegation=False,
             verbose=True,
             llm=self.LLM,
-            tool=[self.scrape_tool, self.list_dir, self.pdf_scrape_tool]
+            tools=[self.scrape_tool]
         )
    
     # def DigitalAgent(self, candidateProfile):
