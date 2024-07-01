@@ -1,76 +1,28 @@
-```
 {
-  "Candidate Profile": {
-    "Name": "Vijay Tambe",
-    "Summary": "Java Developer with 8+ years of experience in software development, passion for learning and exploring new technologies."
+  "job_description_id": "string",
+  "candidate_id": "string",
+  "evaluation_date": "string",
+  "match_score": "number",
+  "suitability": "boolean",
+  "details": {
+    "skills_match": {
+      "required_skills": ["string"],
+      "candidate_skills": ["string"],
+      "missing_skills": ["string"]
+    },
+    "experience_match": {
+      "required_experience_years": "number",
+      "candidate_experience_years": "number"
+    },
+    "education_match": {
+      "required_education_level": "string",
+      "candidate_education_level": "string"
+    },
+    "additional_criteria": {
+      "required_criteria": ["string"],
+      "candidate_criteria": ["string"],
+      "missing_criteria": ["string"]
+    }
   },
-  "Sourced Candidates' Profile": {
-    "Technical Skills": [
-      "Java",
-      "Spring",
-      "Spring Boot",
-      "Hibernate",
-      "React",
-      "JavaScript",
-      "MySQL"
-    ],
-    "Professional Experience": [
-      {
-        "Job Title": "Java Developer",
-        "Company": "Avenir Digital Ltd",
-        "Duration": "May 2017 to Present"
-      },
-      {
-        "Job Title": "Sr. Associate L1",
-        "Company": "Facet Commerce Pvt Ltd",
-        "Duration": "April 2016 to May 2017"
-      },
-      {
-        "Job Title": "Sr. Software Engineer",
-        "Company": "TAIS Tech Ltd",
-        "Duration": "May 2014 to March 2016"
-      },
-      {
-        "Job Title": "Endeca Developer",
-        "Company": "Amplifi Commerce",
-        "Duration": "September 2013 to April 2014"
-      },
-      {
-        "Job Title": "Software Engineer",
-        "Company": "Cybage Software Pvt Ltd",
-        "Duration": "November 2011 to September 2013"
-      }
-    ]
-  },
-  "Reviewed Job Postings for Position Understanding": {
-    "Job Title": "Java Technical Architect",
-    "Company": "Accenture",
-    "Job Description": [
-      "Design and develop Java applications using Spring framework",
-      "Utilize best practices in software development",
-      "Demonstrate expertise in Spring ecosystem",
-      "Design and implement database schemas and queries",
-      "Develop RESTful APIs using Spring MVC",
-      "Write unit tests using JUnit or similar testing frameworks",
-      "Collaborate with cross-functional teams",
-      "Provide technical leadership and guidance to a team of Spring Java developers"
-    ],
-    "Qualifications": [
-      "Bachelor's in Computer Science / Software Engineer / Information Systems",
-      "Masters' in Information Technology / Computer Science"
-    ]
-  },
-  "Prepared Insightful Interview Questions": [
-    "Can you explain your experience with Spring framework?",
-    "How do you ensure high code quality and maintainability?",
-    "Can you walk me through your approach to database integration?",
-    "How do you handle performance optimization in Java applications?",
-    "Can you give an example of a time when you had to provide technical leadership and guidance to a team?"
-  ],
-  "Evaluation of Candidates' Qualifications and Work Experiences": {
-    "Name": "Vijay Tambe",
-    "Result": "Passed",
-    "Reason": "The candidate has relevant experience in Java development, Spring framework, and database integration, and meets the qualifications for the job posting."
-  }
+  "recommendations": ["string"]
 }
-```

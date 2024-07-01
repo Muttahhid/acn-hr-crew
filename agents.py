@@ -3,11 +3,12 @@ from crewai import Agent
 from textwrap import dedent
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
-from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_openai import ChatOpenAI
 # from langchain_community.llms import Ollama
 # from langchain_community.tools import DuckDuckGoSearchRun
 from langchain.agents import Tool
-from crewai_tools import PDFSearchTool, DirectoryReadTool, FileReadTool
+from crewai_tools import PDFSearchTool, FileReadTool
 
 from tools.AcnPDFReader import AcnPDFReader
 from tools.AcnWebScraper import AcnWebScraper
@@ -25,43 +26,44 @@ class HRAgents:
     def __init__(self, applicantData):
 
         # self.LLM = Ollama(model="llama3:latest")
+        # self.LLM = ChatOpenAI(
+        #     model = "llama3_techverse",
+        #     base_url = "http://localhost:11434/v1"
+        # )
         self.LLM = ChatGroq(
             api_key=GROQ_API_KEY,
             model=LLM_MODEL
-        )
-        # self.LLM = ChatGoogleGenerativeAI(model=LLM_MODEL,
-        #     verbose=True,
-        #     temperature=0.5,
-        #     google_api_key=GOOGLE_API_KEY
-        # )
+        )   
 
         self.scrape_tool = AcnWebScraper.extract_web_content
-        # self.file_read_tool = FileReadTool(file_path=applicantData)
+        # self.file_read_tool = FileReadTool(
+        #     file_path='json_template.json',
+        #     description='A tool to read the output example file.'
+        # )
 
-        # self.list_dir = DirectoryReadTool(directory=candidateProfile)
         self.pdf_scrape_tool = AcnPDFReader.read_pdf_file
 
         # self.pdf_scrape_tool = PDFSearchTool(
-        #     pdf=candidateProfile,
-        #     # config=dict(
-        #     #     llm=dict(
-        #     #         provider="groq", # 'openai', 'azure_openai', 'anthropic', 'huggingface', 'cohere', 'together', 'gpt4all', 'ollama', 'jina', 'llama2', 'vertexai', 'google', 'aws_bedrock', 'mistralai', 'vllm', 'groq', 'nvidia'
-        #     #         config=dict(
-        #     #             model=LLM_MODEL,
-        #     #             # temperature=0.5,
-        #     #             # top_p=1,
-        #     #             # stream=true,
-        #     #         ),
-        #     #     ),
-        #     #     embedder=dict(
-        #     #         provider="gpt4all", # or openai, ollama, ...
-        #     #         config=dict(
-        #     #             model="all-MiniLM-L6-v2.gguf2.f16.gguf"
-        #     #             # task_type="retrieval_document",
-        #     #             # title="Embeddings",
-        #     #         ),
-        #     #     ),
-        #     # )
+            # pdf=applicantData,
+            # config=dict(
+            #     llm=dict(
+            #         provider="groq", # 'openai', 'azure_openai', 'anthropic', 'huggingface', 'cohere', 'together', 'gpt4all', 'ollama', 'jina', 'llama2', 'vertexai', 'google', 'aws_bedrock', 'mistralai', 'vllm', 'groq', 'nvidia'
+            #         config=dict(
+            #             model=LLM_MODEL,
+            #             # temperature=0.5,
+            #             # top_p=1,
+            #             # stream=true,
+            #         ),
+            #     )
+                # embedder=dict(
+                #     provider="gpt4all", # or openai, ollama, ...
+                #     config=dict(
+                #         model="all-MiniLM-L6-v2.gguf2.f16.gguf"
+                #         # task_type="retrieval_document",
+                #         # title="Embeddings",
+                #     ),
+                # ),
+            # )
         # )
 
     def Recruiter(self):
@@ -69,14 +71,10 @@ class HRAgents:
             role="Experienced Recruiter",
             backstory=dedent(f"""
                 You are a professional Recruiter who matches qualified individuals with specific open positions at an organization.
-                For the task at hand, you are required to analyse candidate profiles to gather insights into candidates' professional backgrounds, review job postings to understand the requirements, prepare insightful interview questions, and evaluate candidates based on their qualifications, experience, responses during the interview, and overall fit for the role. 
-
             """),
             goal=dedent(f"""
                 To identify top talent and make informed decisions that benefit both the candidates and the hiring companies to match their skill sets and requirements.
             """),
-            # tools=[tool_1, tool_2],
-            allow_delegation=False,
             verbose=True,
             llm=self.LLM,
             tools=[self.scrape_tool, self.pdf_scrape_tool]
@@ -96,7 +94,7 @@ class HRAgents:
             allow_delegation=False,
             verbose=True,
             llm=self.LLM,
-            tools=[self.scrape_tool]
+            # tools=[self.scrape_tool]
         )
    
     def HrManager(self):
@@ -116,26 +114,20 @@ class HRAgents:
             tools=[self.scrape_tool]
         )
    
-    # def DigitalAgent(self, candidateProfile):
+    def DigitalAgent(self):
 
-    #     return Agent(
-    #         role="Digital Agent",
-    #         backstory=dedent(f"""
-    #            You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
-    #             Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
-    #             Here is the text extracted from the candidate CV:
-    #             {candidateProfile}
-    #         """),
-    #         goal=dedent(f"""
-    #             Remember to focus on accuracy, relevancy, and ensuring that the extracted content aligns with the given parameters. 
-    #             Ensure that the content is presented in a clear and concise manner for easy comprehension.
-                        
-    #             Format the report in markdown format with appropriate headings and sections for each link's analysis. The report should be well-organized and easy to read for quick reference.
-    #         """),
-    #         # tools=[tool_1, tool_2],
-    #         allow_delegation=False,
-    #         verbose=True,
-    #         llm=self.Groq,
-    #         tools=[]
-    #     )
+        return Agent(
+            role="Data Analyst",
+            backstory=dedent(f"""
+                You are a professional data analyst who excels in extracting and processing information from various file formats and web links.
+            """),
+            goal=dedent(f"""
+                Converting PDF documents and web links into structured data formats like JSON.
+            """),
+            # tools=[tool_1, tool_2],
+            allow_delegation=False,
+            verbose=True,
+            llm=self.LLM,
+            tools=[self.scrape_tool, self.pdf_scrape_tool]
+        )
     

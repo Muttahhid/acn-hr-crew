@@ -1,5 +1,6 @@
 from crewai import Task
 from textwrap import dedent
+from utils.ACN_Utility import ACN_Utility
 
 # This is an example of how to define custom tasks.
 # You can define as many tasks as you want.
@@ -16,79 +17,45 @@ class HRTasks:
         return Task(
             description=dedent(
                 f"""
-                You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
-                Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
-                
-                Here is the web link of the job description: {jobPostingURL}
-                
-                Here is the information of applicants:
-                {applicantData}
-
-                For each applicant, 
-                - Generate a report in Markdown format with the following sections based on each candidate skills and evaluations made
-                    - Sourced candidates' profile.
-                    - Reviewed job postings for position understanding.
-                    - Prepared insightful interview questions.
-                    - Evaluate each candidates' qualifications and work experiences.
-                    - Make sure to include their name in your report
-                    - Section with Passed and Failed candidates
-                                       
-                {self.__tip_section()}
-                                       
-                {self.__notes_links()}
-
-            """
+                    You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
+                    Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths and overall suitability for a specific job role.
+                        Job URL: {jobPostingURL}
+                        CV in PDF: {applicantData}
+                        Date: {ACN_Utility.getCurrentDate("%d-%m-%Y")}
+                        JSON Keys: job_description_id,candidate_id,evaluation_date,match_score,RAG_status,skills_match_required_skills,skills_match_candidate_skills,skills_match_missing_skills,experience_match_required_years,candidate_working_experiences,education_match_required_level,education_match_candidate_level,recommendations
+                        JSON values datatypes: String,String,String,Decimal,String,List[String],List[String],List[String],Integer,List[String],List[String],List[String],LongText
+                """
             ),
             agent=agent,
             expected_output=dedent(
                 f"""
-                For each applicant, 
-                - Generate a report in Markdown format with the following sections based on each candidate skills and evaluations made
-                    - Sourced candidates' profile.
-                    - Reviewed job postings for position understanding.
-                    - Prepared insightful interview questions.
-                    - Evaluate each candidates' qualifications and work experiences.
-                    - Make sure to include their name in your report
-                    - Section with Passed and Failed candidates
-
-            """
-                ),
-            output_file="reports/RecruiterReport.md"
+                   The JSON output should be according to the given schema.
+                """
+            ),
+            output_file="reports/recruiter_"+ACN_Utility.extract_filename_from_string(applicantData)+".json"
         )
 
 # tech
-    def tech_evaluation(self, agent, jobPostingURL, candidateProfile):
+    def tech_evaluation(self, agent, jobPostingURL, applicantData):
         return Task(
             description=dedent(
                 f"""
-                Using the input from the recruiter and candidate profiles data,
-                Engage in a technical interview with a candidate by asking insightful questions based on the specific technology relevant to the job at hand. 
-                Evaluate the candidate's responses and knowledge of the technology as outlined in the job description, ensuring that they align with the required skill set and expertise needed for the role.
-                
-                Directory path containing CV:
-                {candidateProfile}
+                Evaluate the candidate's experiences, knowledge of the technology as outlined in the job description, ensuring that they align with the required skill set and expertise needed for the role.
+                Job URL: {jobPostingURL}
+                CV in PDF: {applicantData}
+                Date: {ACN_Utility.getCurrentDate("%d-%m-%Y")}
 
-                Here is the link of the job posting: {jobPostingURL}
-
-                Generate a report based on the candidate evaluation and if candidate has good capabilities, pass to HR for further actions.
-
-                {self.__tip_section()}
-
-                {self.__notes_links()}
+                Add these Keys to the existing JSON: tech_skills_required,tech_skills_candidate,tech_skills_missing,tools_required,tools_knowledge,tools_missing,coding_practices_required,coding_practices_candidate,coding_practices_improvement
+                JSON values datatypes:List[String],List[String],List[String],List[String],List[String],List[String],List[String],List[String],List[String]
             """
             ),
-            # context=[self.recruitment()],
             agent=agent,
             expected_output=dedent(
                 f"""
-                    Generate a report with the following sections based on the candidate skills and evaluations made
-                    - Technical requirements for job postings.
-                    - Insightful interview technical questions as per job requirements.
-                    - Evaluated candidates' skills, qualifications and experiences.
-                    - Make sure to include their name in your report
+                    The JSON output should be according to the given schema.
                 """
             ),
-            output_file="reports/TechReport.md"
+            output_file="reports/tech_"+ACN_Utility.extract_filename_from_string(applicantData)+".json"
 
         )
 
@@ -119,38 +86,25 @@ class HRTasks:
         )
 
 # common_tasks
-    # def data_extraction(self, agent, jobPostingURL, candidateProfile, companyLink, jobBenefitsLink):
-    #     return Task(
-    #         description=dedent(
-    #             f"""
-    #             You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
-    #             Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths, company fit, job benefits, and overall suitability for a specific job role.
-    #             Here is the text extracted from the candidate CV:
-    #             {candidateProfile}
-
-    #             The task requires you to analyze the text extracted from a candidate CV and extract the following information:
-    #             - Job Description and Qualifications: Extract the details outlining the job role and the qualifications required.
-    #             - Candidate Details: Gather all relevant information about the candidate, including their name, work experiences, and strengths.
-    #             - Company Information: Identify details about the company mentioned in the CV.
-    #             - Job Benefits/Worklife: Look for information regarding the benefits offered by the job position and insights into the work-life balance.
-    #             - Evaluation of Candidate Fit: Evaluate whether the candidate is the best fit for the position based on the extracted information.
-    #             You need to delve into the text provided, interpret the data accurately, and provide a comprehensive analysis based on the requirements mentioned.
-    #             For example, when analyzing candidate details, you should focus on extracting specific work experiences, strengths, and qualifications that align with the job description. This will help in determining the candidate's suitability for the position.
-
-    #             Remember to format the report in markdown format with appropriate headings and sections for each link's analysis. The report should be well-organized and easy to read for quick reference.        
-                
-    #             """
-    #         ),
-    #         agent=agent,
-    #         expected_output=dedent(
-    #             f"""
-                
-    #             Generate a report in markdown format with appropriate headings and sections for each link's analysis. 
-    #             The report should be well-organized and easy to read for quick reference.
-
-    #             """
-    #         ),
-    #         output_file="report.md"
-    #         # agent=agent
-    #     )
+    def data_extraction(self, agent,applicantData, jobPostingURL):
+        return Task(
+            description=dedent(
+                f"""
+                    You're an experienced HR manager tasked with analyzing candidate CVs to find the best fit for a job position. 
+                    Your role involves extracting key details from candidate profiles to determine their qualifications, work experiences, strengths and overall suitability for a specific job role.
+                        Job URL: {jobPostingURL}
+                        CV in PDF: {applicantData}
+                        JSON Keys: job_description_id,candidate_id,match_score,isSuitable,skills_match_required_skills,skills_match_candidate_skills,skills_match_missing_skills,experience_match_required_years,experience_match_candidate_years,education_match_required_level,education_match_candidate_level,additional_criteria_required,additional_criteria_candidate,additional_criteria_missing,recommendations
+                        JSON values datatypes: String,String,Decimal,Boolean,List[String],List[String],List[String],Integer,Integer,List[String],List[String],List[String],List[String],List[String],LongText
+                """
+            ),
+            agent=agent,
+            expected_output=dedent(
+                f"""
+                    The JSON output should be according to the given schema.
+                """
+            ),
+            output_file="reports/data_extraction.json"
+            # agent=agent
+        )
     

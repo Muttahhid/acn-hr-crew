@@ -2,11 +2,9 @@ import os
 import PyPDF2
 from HRCrew import HRCrew
 from tools.AcnPDFReader import AcnPDFReader
-import pathlib
-import re
 
-jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00181345_en"
-candidateProfile = "pdf/CV-VijayTambe-JavaDeveloper.pdf"
+jobPostingURL = "https://www.accenture.com/mu-en/careers/jobdetails?id=R00148588_en"
+candidateProfile = "pdf/Deni_Begaj.pdf"
 directory = "./pdf"
 output = "./output.txt"
 
@@ -55,4 +53,12 @@ if __name__ == "__main__":
 
     # delete_file(output)
     # read_dir_pdf(directory, output)
+
+    # for i, file in enumerate(list_directory(directory)):
+    #     if file.endswith('.pdf'):
+    #         pdf_file = os.path.join(directory, file)
+           
+    #         print("Current PDF => ", pdf_file)
+    #         # text = AcnPDFReader.read_pdf_file(pdf_file)
+    #         initCrew(jobPostingURL, pdf_file)
     initCrew(jobPostingURL, candidateProfile)

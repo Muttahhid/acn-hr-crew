@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_community.llms import Ollama
 
+from models import JobEvaluation
+
+
 from agents import HRAgents
 from tasks import HRTasks
 
@@ -13,7 +16,7 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 LLM_MODEL = os.getenv('LLM_MODEL')
 
 class HRCrew:
-    def __init__(self,jobPostingURL, applicantData):
+    def __init__(self, jobPostingURL, applicantData):
         self.jobPostingURL = jobPostingURL
         self.applicantData = applicantData
 
@@ -25,10 +28,10 @@ class HRCrew:
         # Define your custom agcents and tasks here
         recruiter = agents.Recruiter()
         tech_expert = agents.TechnicalExpert()
-        hr_manager = agents.HrManager()
-
         # hr_manager = agents.HrManager()
-        # digital_agent = agents.DigitalAgent(self.candidateProfile)
+
+        # digital_agent = agents.DigitalAgent()
+
 
         # Custom tasks include agent name and variables as input
         recruitment = tasks.recruitment(
@@ -43,24 +46,22 @@ class HRCrew:
             self.applicantData
         )
 
-        finilize_contract = tasks.finilize_contract(
-            hr_manager
-        )
+        # finilize_contract = tasks.finilize_contract(
+        #     hr_manager
+        # )
 
         # data_extraction = tasks.data_extraction(
         #     digital_agent,
-        #     self.jobPostingURL,
-        #     self.candidateProfile,
-        #     config_util.get_key('companyURL'),
-        #     config_util.get_key('benefitsURL')
+        #     self.applicantData,
+        #     self.jobPostingURL
         # )
 
         # Define your custom crew here
         crew = Crew(
-            agents=[recruiter],
-            tasks=[recruitment],
+            agents=[recruiter, tech_expert],
+            tasks=[recruitment, tech_evaluation],
             verbose=True,
-            process=Process.sequential
+            # process=Process.sequential
             # process=Process.hierarchical,
             # manager_llm=ChatGroq(
             #     api_key=GROQ_API_KEY,
